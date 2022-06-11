@@ -2,3 +2,6 @@ sqlalchemy
 pytest
 flask
 flask-sqlalchemy
+smbprotocol
+isort
+black
