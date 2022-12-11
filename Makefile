@@ -1,12 +1,16 @@
-phony: up
+.PHONY: help
+help:
+	@echo "Read the makefile"
+
+.PHONY: up
 up:
 	pip-compile
 
-phony: deps
+.PHONY: deps
 deps:
 	pip-sync
 
-phony: lint
+.PHONY: lint
 lint:
 	isort .
 	black .
