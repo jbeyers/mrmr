@@ -30,14 +30,14 @@
 
 - Basic setup
 
-  - [] poc|Upgrade reqs to newest version
-  - [] poc|python fuse for filesystem
-  - [] Flask app for management
-  - [] Get a way to start it on startup
+  - [ ] poc|Upgrade reqs to newest version
+  - [ ] poc|python fuse for filesystem
+  - [ ] Flask app for management
+  - [ ] Get a way to start it on startup
 
-- [] Configure mrmr drives/mount points
+- [ ] Configure mrmr drives/mount points
 
-  - [] poc|json/yaml/toml config for known drives on local or network accessible
+  - [ ] poc|json/yaml/toml config for known drives on local or network accessible
 
     ```python
     {
@@ -61,9 +61,9 @@
     }
     ```
 
-  - [] Mark a directory or mount point with a dotfile with the mrmr id and mount id.
+  - [ ] Mark a directory or mount point with a dotfile with the mrmr id and mount id.
 
-    - [] `.mrmr/config.json`:
+    - [ ] `.mrmr/config.json`:
 
       ```python
       {
@@ -72,40 +72,40 @@
       }
       ```
 
-    - [] `.mrmr/mrmr.db` for parity blob data (stored on drive)
+    - [ ] `.mrmr/mrmr.db` for parity blob data (stored on drive)
 
       - blob name
 
       - constituent block sha hashes
 
-    - [] `.mrmr/parity/sha256.blob` parity blocks (name taken from sha256 of blob)
+    - [ ] `.mrmr/parity/sha256.blob` parity blocks (name taken from sha256 of blob)
 
-    - [] `.mrmr/deduplicated/sha256.blob` for deduped blocks (hardlinks maybe?)
+    - [ ] `.mrmr/deduplicated/sha256.blob` for deduped blocks (hardlinks maybe?)
 
-  - [] Get POC using 2 drives, no parity
-  - [] Read files, write files
-  - [] Catalogue file sizes and hashes to confirm integrity
+  - [ ] Get POC using 2 drives, no parity
+  - [ ] Read files, write files
+  - [ ] Catalogue file sizes and hashes to confirm integrity
 
-- [] Parity
-  - [] Create parity blocks across drives
-  - [] Record which files (according to hash) and offset in each block
-  - [] Record parity block metadata (in sqlite)
-  - [] Copy this sqlite file into the drives.
-  - [] Or save it as a format in a json file or something
-    - [] The only info needed to recreate would be the hashes of the blocks going into each file.
+- [ ] Parity
+  - [ ] Create parity blocks across drives
+  - [ ] Record which files (according to hash) and offset in each block
+  - [ ] Record parity block metadata (in sqlite)
+  - [ ] Copy this sqlite file into the drives.
+  - [ ] Or save it as a format in a json file or something
+    - [ ] The only info needed to recreate would be the hashes of the blocks going into each file.
 
-- [] Recovery
-  - [] Recreate files onto a new drive (offline?)
-  - [] Serve files from an amount of parity blocks
+- [ ] Recovery
+  - [ ] Recreate files onto a new drive (offline?)
+  - [ ] Serve files from an amount of parity blocks
 
-- [] Spread files across drives, prefer drive with the most space.
-- [] Concentrate redundancy onto specific drives
-- [] 'Stack' drives to match the size of a larger drive?
-- [] Writing happens on the fastest nearest drive.
+- [ ] Spread files across drives, prefer drive with the most space.
+- [ ] Concentrate redundancy onto specific drives
+- [ ] 'Stack' drives to match the size of a larger drive?
+- [ ] Writing happens on the fastest nearest drive.
 
-- [] Keep record of which file goes where
-- [] Send to remote drives via ssh
-- [] Deduplication
+- [ ] Keep record of which file goes where
+- [ ] Send to remote drives via ssh
+- [ ] Deduplication
 
 ## Milestones
 
