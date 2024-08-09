@@ -12,7 +12,6 @@
     - SSH access
     - Samba
     - Some or other block device (online)
-    - start with local and maybe ssh
 - Flexible
   - Configurable amount of redundant drives (on the fly)
   - Even setting a max and having a mode where we use as much as possible.
@@ -26,44 +25,65 @@
   - No server architecture
   - If the metadata falls over, an rsync should get everything back
 
+## Decisions
+
+- Try to match file sizes for parity
+  This allows us to swap a file and its parity info on drives without side-effects
+  Also gets past the issues with different drives having different sizes?
+
 ## Outline
 
 - Basic setup
 
-  - [ ] poc|Upgrade reqs to newest version
-  - [ ] poc|python fuse for filesystem
-  - [ ] Flask app for management
-  - [ ] Get a way to start it on startup
+  - [ ] m|spec out v1 of configuration spec
+  - [ ] m|Upgrade reqs to newest version
+  - [ ] m|python fuse for filesystem
+  - [ ] c|Flask app for management
+  - [ ] s|Get a way to start it on startup
 
-- [ ] Configure mrmr drives/mount points
+- [ ] m|Configure mrmr drives/mount points
 
-  - [ ] poc|json/yaml/toml config for known drives on local or network accessible
+  - [ ] m|json config for known drives on local or network accessible
 
     ```python
     {
-        'drive_id': 'uuid4_1',
-        'parity_drives': 3,
-        'mounts': [
+        'version': 1,
+        'drives': [
+
             {
-                'drive_id': 'uuid4_2',
-                'mount_point': '/mnt/blep',
-                'is_removable': True, # Maybe?
-            },
-            {
-                'drive_id': 'uuid4_3',
-                'connection': {
-                    'type': 'ssh',
-                    'host': 'bukkit.local',
-                    'mount': '/media/bukkit_1',
-                },
-            },
+                'drive_id': 'uuid4_1', # Unique identifier for the mrmr config. Allows multiple mrmr drives mounted on a single host.
+                'minimum_parity': 3, # Minimum number of parity drives for any piece of data. Optional, 0 is jbod without parity.
+                'mounts': [
+                    {
+                        'drive_id': 'uuid4_2', # Assigned uuid
+                        'mount_point': '/mnt/blep', # Where it's mounted on the host. TBD, should this always be part of connection?
+                        'parity_drive': 0, # Parity stack position. Maybe pick a high number for drives that should be parity?
+                        'parity_offset': 0, # If we do decide to stack drives in the same parity-drive slot. Optional, default 0.
+                        'role': 'combined', # TBD, one of 'data', 'parity', 'combined', 'removable'. Optional, default combined.
+                        'is_removable': True, # Maybe?
+                        'scratch_preference': # Should this be used as a scratch drive? integer, lower meand preferred, optional, default to parity_drive.
+                    },
+                    {
+                        'drive_id': 'uuid4_3',
+                        'parity_position': 1,
+                        'free_space': '1GB', # Space to keep free on the drive. Useful for drives that are primary drives
+                        'max_usage': '500GB', # Max space to use. Simpler than free_space, since it will allocate space.
+                        'connection': { # TBD, but this seems flexible enough
+                            'type': 'ssh',
+                            'host': 'bukkit.local',
+                            'user': 'pi',
+                            'mount_point': '/media/bukkit_1',
+                        },
+                    },
+                ]
+            }
         ]
     }
     ```
 
-  - [ ] Mark a directory or mount point with a dotfile with the mrmr id and mount id.
+  - [ ] c|Mark a directory or mount point with a dotfile with the mrmr id and mount id.
 
-    - [ ] `.mrmr/config.json`:
+    - [ ] c|`.mrmr/config.json`:
 
       ```python
       {
@@ -72,58 +92,76 @@
       }
       ```
 
-    - [ ] `.mrmr/mrmr.db` for parity blob data (stored on drive)
+    - [ ] c|`.mrmr/mrmr.db` for parity blob data (stored on drive)
 
       - blob name
 
-      - constituent block sha hashes
+      - constituent files sha hashes and offsets
 
-    - [ ] `.mrmr/parity/sha256.blob` parity blocks (name taken from sha256 of blob)
+    - [ ] c|`.mrmr/parity/sha256.blob` parity blocks (name taken from sha256 of blob)
 
-    - [ ] `.mrmr/deduplicated/sha256.blob` for deduped blocks (hardlinks maybe?)
+    - [ ] c|`.mrmr/deduplicated/sha256.blob` for deduped blocks (hardlinks maybe?)
 
-  - [ ] Get POC using 2 drives, no parity
-  - [ ] Read files, write files
-  - [ ] Catalogue file sizes and hashes to confirm integrity
+  - [ ] m|Read files, write files
+  - [ ] s|Catalogue file sizes and hashes to confirm integrity
 
-- [ ] Parity
-  - [ ] Create parity blocks across drives
-  - [ ] Record which files (according to hash) and offset in each block
-  - [ ] Record parity block metadata (in sqlite)
-  - [ ] Copy this sqlite file into the drives.
-  - [ ] Or save it as a format in a json file or something
-    - [ ] The only info needed to recreate would be the hashes of the blocks going into each file.
+- [ ] c|Parity
+  - [ ] c|Create parity blocks across drives
+  - [ ] c|Record which files (according to hash) and offset in each block
+  - [ ] c|Record parity block metadata (in sqlite)
+  - [ ] c|Copy this sqlite file into the drives.
+  - [ ] c|Or save it as a format in a json file or something
+    - [ ] c|The only info needed to recreate would be the hashes of the blocks going into each file.
 
 - [ ] Recovery
-  - [ ] Recreate files onto a new drive (offline?)
-  - [ ] Serve files from an amount of parity blocks
+  - [ ] c|Recreate files onto a new drive (offline?)
+  - [ ] c|Serve files from an amount of parity blocks
 
-- [ ] Spread files across drives, prefer drive with the most space.
-- [ ] Concentrate redundancy onto specific drives
-- [ ] 'Stack' drives to match the size of a larger drive?
-- [ ] Writing happens on the fastest nearest drive.
-
-- [ ] Keep record of which file goes where
-- [ ] Send to remote drives via ssh
-- [ ] Deduplication
+- [ ] c|Spread files across drives, prefer drive with the most space.
+- [ ] c|Concentrate redundancy onto specific drives
+- [ ] c|'Stack' drives to match the size of a larger drive?
+- [ ] c|Writing happens on the fastest nearest drive.
+- [ ] c|Keep record of which file goes where
+- [ ] c|Send to remote drives via ssh
+- [ ] c|Deduplication
 
 ## Milestones
 
-### POC
+### 1:POC
 
 - Only local drives
 - Send write to drive with most space
 - Read combined
 - Folder listing combined
-- Store files in DB?
+- Basic config file
+- Store file locations in DB
 
-### 1
+### 2:Single-drive Redundancy, manual recovery
 
+- Single drive parity (mimimum_parity 1)?
 - Redundancy using parity
+- Separate, manual recovery script
 
-## 2
+### 3:SSH
 
 - ssh accessible drives
 
+### 4:Multi-drive redundancy
 
- 
+- Figure out the scheme for shifted parity
+- Encode shifted parity blocks
+- Save in db
+- Manual recovery after multiple drive failures
+- copy on write?
+
+### 5:Seamless
+
+- Admin UI
+- Automatic read access of missing data from other drives and parity
+- Automatic redistribution on failed drive access
+- Config for removable drives
+- Config for how long to wait
+- Automatic discovery of available/configured drives, given a connection
+- Automatic remounting of moved drives
+- Prep drives for decommissioning
+- Set drives as read-only
