@@ -12,6 +12,10 @@
     - SSH access
     - Samba
     - Some or other block device (online)
+- Simple
+  - Everything in userspace
+  - No server architecture
+  - If the metadata falls over, an rsync should get everything back given working drives
 - Flexible
   - Configurable amount of redundant drives (on the fly)
   - Even setting a max and having a mode where we use as much as possible.
@@ -20,10 +24,6 @@
   - Adding new drives should be seamless
   - Can ingest new drives with data already on them
   - Adding new empty drives immediately makes them available.
-- Simple
-  - Everything in userspace
-  - No server architecture
-  - If the metadata falls over, an rsync should get everything back
 
 ## Decisions
 
@@ -49,7 +49,6 @@
     {
         'version': 1,
         'drives': [
-
             {
                 'drive_id': 'uuid4_1', # Unique identifier for the mrmr config. Allows multiple mrmr drives mounted on a single host.
                 'minimum_parity': 3, # Minimum number of parity drives for any piece of data. Optional, 0 is jbod without parity.
@@ -96,7 +95,7 @@
 
       - blob name
 
-      - constituent files sha hashes and offsets
+      - constituent files sha hashes and offsets (maybe PKs?)
 
     - [ ] c|`.mrmr/parity/sha256.blob` parity blocks (name taken from sha256 of blob)
 
@@ -127,24 +126,27 @@
 
 ## Milestones
 
-### 1:POC
+### Local read-only
 
 - Only local drives
-- Send write to drive with most space
 - Read combined
 - Folder listing combined
 - Basic config file
 - Store file locations in DB
+
+### SSH
+
+- ssh accessible drives
+
+### Writing
+
+- Send write to drive with most space
 
 ### 2:Single-drive Redundancy, manual recovery
 
 - Single drive parity (mimimum_parity 1)?
 - Redundancy using parity
 - Separate, manual recovery script
-
-### 3:SSH
-
-- ssh accessible drives
 
 ### 4:Multi-drive redundancy
 
