@@ -79,11 +79,16 @@ the blocks now look like this:
 | d0 | XY |  |  |  |  |  |  |  |
 
 From this we can see that if we XOR i0 and i1 (call that f0), we cancel out d0, and f0 will be d1 XORed with d1 shifted one byte to the right.
+
 Now we are stuck. We cannot derive d1 using just f0: We need another piece of information.
+
 We can get d1 from f0 if we have just one byte from d1. If we have that, we can derive all the other bytes.
+
 Once we have d1, we can use that to get d0 using i0 or i1.
 
-TODO: Flesh out the proposed solution here.
+I have a simple python script `scripts/parity_experiment.py` that illustrates how this works, and verifies that it does.
+
+This can be combined with the RAID 6 algorithm to provide higher levels of parity. Not infinite, but I think the combination of triple parity explained in [this post](https://blogs.oracle.com/solaris/post/understanding-raid-6-with-junior-high-math) and the technique illustrated above can provide 3, 6, 9, etc levels of parity with very little overhead.
 
 ## Adding more parity
 
