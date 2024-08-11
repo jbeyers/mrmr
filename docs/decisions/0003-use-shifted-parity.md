@@ -19,11 +19,11 @@ For MRMR, the goal is to provide redundant parity for multiple drive failures. T
 
 - Simple to understand
 
-  It should be easy to visualise the parity system so that it's easy to verify, test and build recovery tools
+  It should be easy to visualise the parity system so that it's easy to verify, test and build recovery tools.
 
 - Efficient storage
 
-  The stored recovery blocks should use no more space than the source blocks, if possible
+  The stored recovery blocks should use no more space than the source blocks, if possible.
 
 - Easy to add/remove drives
 
@@ -46,7 +46,7 @@ Understanding enough of Galois fields to implement a solid solution for this wit
 
 Shifted parity seems the most straightforward implementation. It's efficient, easy to store the metadata separately, can be made to not alter the original files, and makes it simple to add/remove data blocks from the parity set.
 
-There is a good chance that shifted parity is actually a subset of a Galois field implementation. This does not preclude the use of a full Galois field implementation in future for even more redundancy. The chosen implementation would then slot into that implementation.
+This does not preclude the use of a full Galois field implementation in future for even more redundancy. The chosen implementation would then slot into that implementation.
 
 ## More Information
 

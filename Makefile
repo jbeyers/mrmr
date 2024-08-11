@@ -4,7 +4,7 @@ help:
 
 .PHONY: up
 up:
-	pip-compile
+	pip-compile > requirements.txt
 
 .PHONY: deps
 deps:
