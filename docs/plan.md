@@ -1,34 +1,10 @@
 # Outline for MRMR
 
-## Main goals
-
-- Cheap
-  - Space efficient (Only minimal parity info, no data duplicated on multiple drives)
-  - Maximal use of already-bought drives
-    - Each parity block can be parity for a variable set of original blocks
-    - Each drive considered as a redundant unit
-  - Use whatever is available and simple
-    - local drives
-    - SSH access
-    - Samba
-    - Some or other block device (online)
-- Simple
-  - Everything in userspace
-  - No server architecture
-  - If the metadata falls over, an rsync should get everything back given working drives
-- Flexible
-  - Configurable amount of redundant drives (on the fly)
-  - Even setting a max and having a mode where we use as much as possible.
-  - Allow removable drives to be removed (Those would only hold original data, not parity?)
-    - When re-added, quick scan for changed content
-  - Adding new drives should be seamless
-  - Can ingest new drives with data already on them
-  - Adding new empty drives immediately makes them available.
-
 ## Decisions
 
 - Try to match file sizes for parity
-  This allows us to swap a file and its parity info on drives without side-effects
+
+  This allows us to swap a file and its parity info on drives without side-effects.
   Also gets past the issues with different drives having different sizes?
 
 ## Outline
@@ -128,11 +104,11 @@
 
 ### Local read-only
 
-- Only local drives
-- Read combined
-- Folder listing combined
-- Basic config file
-- Store file locations in DB
+- [ ] Only local drives
+- [ ] Read combined
+- [ ] Folder listing combined
+- [ ] Basic config file
+- [ ] Store file locations in DB
 
 ### SSH
 

@@ -90,6 +90,8 @@ I have a simple python script `scripts/parity_experiment.py` that illustrates ho
 
 This can be combined with the RAID 6 algorithm to provide higher levels of parity. Not infinite, but I think the combination of triple parity explained in [this post](https://blogs.oracle.com/solaris/post/understanding-raid-6-with-junior-high-math) and the technique illustrated above can provide 3, 6, 9, etc levels of parity with very little overhead.
 
+Another option is to provide simple parity quickly, then use ZFEC to provide a lot more parity blocks eventually.
+
 ## Adding more parity
 
 We can continue this pattern to add more parity drives:

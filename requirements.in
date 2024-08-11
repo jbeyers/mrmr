@@ -1,7 +1,8 @@
-sqlalchemy
-pytest
+black
 flask
 flask-sqlalchemy
-smbprotocol
 isort
-black
+pytest
+smbprotocol
+sqlalchemy
+sqlalchemy-repr
