@@ -3,7 +3,7 @@ import random
 def get_randoms():
     return [random.randint(0, 65000) for i in range(10)]
 
-def bytewise_xors(*args):
+def xors(*args):
     if len(args) <2:
         raise ValueError('Need at least 2 lists of integers')
     result = args[0].copy()
@@ -23,13 +23,21 @@ def shift_register(input, how_much):
 def get_parity(drives, shift):
     parity = [0 for i in range(len(drives[0]))]
     for i, drive in enumerate(drives):
-        parity = bytewise_xors(parity, shift_register(drive, -i*shift))
+        parity = xors(parity, shift_register(drive, -i*shift))
         
     return parity
 
-def reconstruct(seq, starting_byte):
-    # TODO: Start again here
-    pass
+def reconstruct(seq, offset, starting_byte):
+    lenny = len(seq)
+    answer = [0 for i in range(lenny)]
+    next_byte = starting_byte
+    for i in range(lenny):
+        pozzy = (i * offset) % lenny
+        answer[pozzy] = next_byte
+        next_pozzy = ((i + 1) * offset) % lenny
+        next_byte = xors([next_byte], [seq[next_pozzy]])[0]
+    return answer
+
 
 
 d1 = [2, 4, 8, 60001, 8279, 63471, 38186, 35323, 29830, 24039]
@@ -42,17 +50,19 @@ print(p0)
 print(p1)
 print(p2)
 
-r0 = bytewise_xors(p0, d1)
+r0 = xors(p0, d1)
 assert r0 == d0
 
-i0 = bytewise_xors(p0, p1)
+i0 = xors(p0, p1)
 print(i0)
-assert i0 == bytewise_xors(d1, shift_register(d1, -1))
+assert i0 == xors(d1, shift_register(d1, -1))
 
-print(bytewise_xors(i0, shift_register(i0, 1)))
+print(xors(i0, shift_register(i0, 1)))
 
 print(d1)
-f0 = bytewise_xors(d1, shift_register(d1,1))
+f0 = xors(d1, shift_register(d1,1))
 print(f0)
-answer = bytewise_xors(f0, shift_register(f0,1))
+
+answer = reconstruct(f0, 1, d1[0])
 print(answer)
+assert answer == d1

@@ -79,7 +79,9 @@ the blocks now look like this:
 | d0 | XY |  |  |  |  |  |  |  |
 
 From this we can see that if we XOR i0 and i1 (call that f0), we cancel out d0, and f0 will be d1 XORed with d1 shifted one byte to the right.
-Now we are stuck. We cannot derive d0 and d1 using just i0 and i1: We need another piece of information.
+Now we are stuck. We cannot derive d1 using just f0: We need another piece of information.
+We can get d1 from f0 if we have just one byte from d1. If we have that, we can derive all the other bytes.
+Once we have d1, we can use that to get d0 using i0 or i1.
 
 TODO: Flesh out the proposed solution here.
 
