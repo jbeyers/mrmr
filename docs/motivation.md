@@ -103,7 +103,7 @@ Considered Alternatives:
 
 ### All-in-one NAS systems
 
-- [Unraid](https://unraid.net/) looks great, for a price, and the licensing for 
+- [Unraid](https://unraid.net/) looks great, for a price.
 
 ### FUSE filesystems
 
@@ -138,10 +138,12 @@ Considered Alternatives:
 - [Backblaze Java implementation](https://github.com/Backblaze/JavaReedSolomon/blob/master/src/main/java/com/backblaze/erasure/Galois.java)
 - [A Go port of the Backblaze lib](https://github.com/klauspost/reedsolomon)
 - [ZFEC](https://pypi.org/project/zfec/) is probably the best resource for Python stuff. Usable for eventual consistency parity if we don't care too much about being able to remove blocks
+- [PAR files](https://en.wikipedia.org/wiki/Parchive) also uses Reed-Solomon coding
 - [Low-density parity-check code](https://en.wikipedia.org/wiki/Low-density_parity-check_code) could be useful.
 
 ### Other links
 
+- [POSIX filesystems overview](https://grimoire.carcano.ch/blog/posix-compliant-filesystems/): A nice overview of POSIX filesystems.
 - [ImageHash](https://pypi.org/project/ImageHash/) provides perceptual image hashing for deduplication?
 - [Guessit](https://github.com/guessit-io/guessit) can guess at video content given the filename.
 - [YouBit](https://github.com/MeViMo/youbit) lets you save any type of file to YouTube.
