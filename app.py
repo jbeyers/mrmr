@@ -39,22 +39,75 @@ Base = declarative_base(cls=PrettyRepresentableBase)
 
 
 class File(Base):
+    """
+    Should be called inode
+    """
     __tablename__ = "file"
     id: Mapped[int] = mapped_column(primary_key=True)
-    mount_id: Mapped[int]
-    mpath: Mapped[str] = mapped_column(index=True)
-    size: Mapped[int]
+    mount_id: Mapped[int] # ID of the mount that the file is on. Starts with 1, so subtract one to get the offset.
+    mpath: Mapped[str] = mapped_column(index=True) # Materialised path, with `/` as the delimiter.
+    size: Mapped[int] # This might be doubled up, should be on the file/hash.
     mtime: Mapped[int]
     hash_id: Mapped[Optional[int]] = mapped_column(ForeignKey("hash.id"))
     hash: Mapped["Hash"] = relationship(back_populates="files")
+    # ctime: Mapped[int]
+    # atime: Mapped[int]
+    # uid: Mapped[int]
+    # gid: Mapped[int]
+    # permissions_byte_thing....
+    # type (file, directory, softlink maybe, hardlink maybe)
+
 
 
 class Hash(Base):
+    """
+    Hash of the file. Should be called file.
+    """
     __tablename__ = "hash"
     id: Mapped[int] = mapped_column(primary_key=True)
     digest: Mapped[str] = mapped_column(unique=True)
     files: Mapped[List["File"]] = relationship(back_populates="hash")
+    # slots: Mapped[List["Slot"]] = relationship(back_populates="hash")
+    # size: Mapped[int] # This should be on the hash. The hash should be called file.
 
+
+class Slot(Base):
+    """
+    A slot in a parity block.
+
+    Most slots will fill up a layer in the parity, determined by its mount id minus one.
+    """
+    __tablename__ = "slot"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    hash_id: Mapped[Optional[int]] = mapped_column(ForeignKey("hash.id"))
+    hash: Mapped["Hash"] = relationship(back_populates="slots")
+    parity_block_id: Mapped[Optional[int]] = mapped_column(ForeignKey("parity_block.id"))
+    parity_block: Mapped["ParityBlock"] = relationship(back_populates="slots")
+    mount_id: Mapped[int] # ID of the mount that the file is on. Starts with 1, so subtract one to get the layer.
+    slot_offset: Mapped[int] # If we pack a layer with more than one slot, this indicates the offset in the layer.
+    file_offset: Mapped[int] # Offset of the data in the source file.
+    file_size: Mapped[int] # Size of the data from the source file.
+
+
+
+class ParityBlock(Base):
+    """
+    A block containing parity info.
+    """
+    __tablename__ = "parity_block"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    size: Mapped[int] # Size of the source data blocks. NOT the resulting parity block size.
+    parity_type: Mapped[int]
+    index: Mapped[int] = mapped_column(doc="The parity block index (p0, p1, etc.)")
+    slots: Mapped[List["Slot"]] = relationship(back_populates="parity_block")
+    file_id: Mapped[int] # file/hash id
+    mount_id: Mapped[int]
+
+parity_types = {
+    1: "raid", # Raid 5/6 plain parity, no padding. Index 0 should be interoperable with type 2, if padded.
+    2: "shifted", # Shifted parity, actual block size is 1 byte larger than block_size.
+    3: "zfec", # zfec parity. I think PARfiles work the same way.
+}
 
 def pedestrian(path):
     """
@@ -112,6 +165,7 @@ def backfill_hashes():
     batch_size = 100
     progress = 0
     result = []
+    pointer = 0
 
     with Session(engine) as session:
         while len(result) or not progress:
@@ -119,15 +173,21 @@ def backfill_hashes():
             unhashed_files = (
                 select(File)
                 .where(File.hash_id == None)
+                .where(File.id > pointer)
                 .order_by(File.id)
                 .limit(batch_size)
             )
+            # if skip: unhashed_files.where(File.id > skip)
             result = session.scalars(unhashed_files).all()
             for item in result:
                 path = f"{mount_map[item.mount_id]}{item.mpath}"
                 print(item.id)
+                pointer = item.id
                 print(item)
-                digest = get_hash(path)
+                try:
+                    digest = get_hash(path)
+                except:
+                    continue
                 hash = session.scalars(
                     select(Hash).where(Hash.digest == digest)
                 ).first()
