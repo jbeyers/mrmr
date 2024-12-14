@@ -71,37 +71,37 @@ class Hash(Base):
     # size: Mapped[int] # This should be on the hash. The hash should be called file.
 
 
-class Slot(Base):
-    """
-    A slot in a parity block.
+# class Slot(Base):
+#     """
+#     A slot in a parity block.
 
-    Most slots will fill up a layer in the parity, determined by its mount id minus one.
-    """
-    __tablename__ = "slot"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    hash_id: Mapped[Optional[int]] = mapped_column(ForeignKey("hash.id"))
-    hash: Mapped["Hash"] = relationship(back_populates="slots")
-    parity_block_id: Mapped[Optional[int]] = mapped_column(ForeignKey("parity_block.id"))
-    parity_block: Mapped["ParityBlock"] = relationship(back_populates="slots")
-    mount_id: Mapped[int] # ID of the mount that the file is on. Starts with 1, so subtract one to get the layer.
-    slot_offset: Mapped[int] # If we pack a layer with more than one slot, this indicates the offset in the layer.
-    file_offset: Mapped[int] # Offset of the data in the source file.
-    file_size: Mapped[int] # Size of the data from the source file.
+#     Most slots will fill up a layer in the parity, determined by its mount id minus one.
+#     """
+#     __tablename__ = "slot"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     hash_id: Mapped[Optional[int]] = mapped_column(ForeignKey("hash.id"))
+#     hash: Mapped["Hash"] = relationship(back_populates="slots")
+#     parity_block_id: Mapped[Optional[int]] = mapped_column(ForeignKey("parity_block.id"))
+#     parity_block: Mapped["ParityBlock"] = relationship(back_populates="slots")
+#     mount_id: Mapped[int] # ID of the mount that the file is on. Starts with 1, so subtract one to get the layer.
+#     slot_offset: Mapped[int] # If we pack a layer with more than one slot, this indicates the offset in the layer.
+#     file_offset: Mapped[int] # Offset of the data in the source file.
+#     file_size: Mapped[int] # Size of the data from the source file.
 
 
 
-class ParityBlock(Base):
-    """
-    A block containing parity info.
-    """
-    __tablename__ = "parity_block"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    size: Mapped[int] # Size of the source data blocks. NOT the resulting parity block size.
-    parity_type: Mapped[int]
-    index: Mapped[int] = mapped_column(doc="The parity block index (p0, p1, etc.)")
-    slots: Mapped[List["Slot"]] = relationship(back_populates="parity_block")
-    file_id: Mapped[int] # file/hash id
-    mount_id: Mapped[int]
+# class ParityBlock(Base):
+#     """
+#     A block containing parity info.
+#     """
+#     __tablename__ = "parity_block"
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     size: Mapped[int] # Size of the source data blocks. NOT the resulting parity block size.
+#     parity_type: Mapped[int]
+#     index: Mapped[int] = mapped_column(doc="The parity block index (p0, p1, etc.)")
+#     slots: Mapped[List["Slot"]] = relationship(back_populates="parity_block")
+#     file_id: Mapped[int] # file/hash id
+#     mount_id: Mapped[int]
 
 parity_types = {
     1: "raid", # Raid 5/6 plain parity, no padding. Index 0 should be interoperable with type 2, if padded.
