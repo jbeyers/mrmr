@@ -212,4 +212,5 @@ def backfill_hashes():
 #     result = session.execute(stmt)
 #     print(result.all())
 
-backfill_hashes()
+if __name__ == "__main__":
+    backfill_hashes()
