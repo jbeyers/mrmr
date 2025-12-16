@@ -42,11 +42,15 @@ class File(Base):
     """
     Should be called inode
     """
+
     __tablename__ = "file"
     id: Mapped[int] = mapped_column(primary_key=True)
-    mount_id: Mapped[int] # ID of the mount that the file is on. Starts with 1, so subtract one to get the offset.
-    mpath: Mapped[str] = mapped_column(index=True) # Materialised path, with `/` as the delimiter.
-    size: Mapped[int] # This might be doubled up, should be on the file/hash.
+    # ID of the mount that the file is on. Starts with 1, so subtract one to get the offset.
+    mount_id: Mapped[ int ]
+    mpath: Mapped[str] = mapped_column(
+        index=True
+    )  # Materialised path, with `/` as the delimiter.
+    size: Mapped[int]  # This might be doubled up, should be on the file/hash.
     mtime: Mapped[int]
     hash_id: Mapped[Optional[int]] = mapped_column(ForeignKey("hash.id"))
     hash: Mapped["Hash"] = relationship(back_populates="files")
@@ -58,11 +62,11 @@ class File(Base):
     # type (file, directory, softlink maybe, hardlink maybe)
 
 
-
 class Hash(Base):
     """
     Hash of the file. Should be called file.
     """
+
     __tablename__ = "hash"
     id: Mapped[int] = mapped_column(primary_key=True)
     digest: Mapped[str] = mapped_column(unique=True)
@@ -89,7 +93,6 @@ class Hash(Base):
 #     file_size: Mapped[int] # Size of the data from the source file.
 
 
-
 # class ParityBlock(Base):
 #     """
 #     A block containing parity info.
@@ -104,10 +107,11 @@ class Hash(Base):
 #     mount_id: Mapped[int]
 
 parity_types = {
-    1: "raid", # Raid 5/6 plain parity, no padding. Index 0 should be interoperable with type 2, if padded.
-    2: "shifted", # Shifted parity, actual block size is 1 byte larger than block_size.
-    3: "zfec", # zfec parity. I think PARfiles work the same way.
+    1: "raid",  # Raid 5/6 plain parity, no padding. Index 0 should be interoperable with type 2, if padded.
+    2: "shifted",  # Shifted parity, actual block size is 1 byte larger than block_size.
+    3: "zfec",  # zfec parity. I think PARfiles work the same way.
 }
+
 
 def pedestrian(path):
     """
