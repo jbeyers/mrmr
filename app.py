@@ -46,11 +46,11 @@ class File(Base):
     __tablename__ = "file"
     id: Mapped[int] = mapped_column(primary_key=True)
     # ID of the mount that the file is on. Starts with 1, so subtract one to get the offset.
-    mount_id: Mapped[ int ]
-    mpath: Mapped[str] = mapped_column(
-        index=True
-    )  # Materialised path, with `/` as the delimiter.
-    size: Mapped[int]  # This might be doubled up, should be on the file/hash.
+    mount_id: Mapped[int]
+    # Materialised path, with `/` as the delimiter.
+    mpath: Mapped[str] = mapped_column(index=True)
+    # This might be doubled up, should be on the file/hash.
+    size: Mapped[int]
     mtime: Mapped[int]
     hash_id: Mapped[Optional[int]] = mapped_column(ForeignKey("hash.id"))
     hash: Mapped["Hash"] = relationship(back_populates="files")

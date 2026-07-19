@@ -1,0 +1,32 @@
+*.DNG
+*.MOV
+*.MP4
+*.MPG
+*.PPT
+*.PPTX
+*.VOB
+*.WMV
+*.dng
+*.m4v
+*.mov
+*.mp4
+*.mpg
+*.ppt
+*.pptx
+*.psd
+*.rmvb
+*.vob
+*.wmv
+*B800fsB*
+*.MXF
+*WD160*
+*#recycle*
+*.zip
+*.xmp
+*Thumbs.db
+*GEMORS*
+*FILKRAFT SUPPLIERS 280 GB*
+FILKRAFT MAIN FOLDER/*
+INTERPACK*
+JAPAN*
+*@eaDir*
